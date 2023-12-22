@@ -54,14 +54,17 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        print(password, username)
+        print(username, password)
+
+        # Use Django forms for input validation and cleaning
+
         user = authenticate(request, username=username, password=password)
-        if not user:
-            messages.error(request, "User not found")
-            return render(request, 'registration/login.html')
-        login(request, user)
-        messages.info(request, 'Login successfull!')
-        return redirect('home')
+        if user is not None:
+            login(request, user)
+            messages.success(request, 'Login successful!')
+            return redirect('/')
+        else:
+            messages.error(request, "Invalid username or password")
     return render(request, 'registration/login.html')
 
 
@@ -83,10 +86,3 @@ class ResultView(FilterView):
             'results': results
         }
         return context
-    #
-    # def get_context_data(self, *args, **kwargs):
-    #     context = super().get_context_data(*args, **kwargs)
-    #     context[''] = self.category()
-    #     context['tags'] = self.tag()
-    #     context['test'] = "Test xabar"
-    #     return context
